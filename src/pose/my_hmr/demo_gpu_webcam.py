@@ -79,7 +79,8 @@ if __name__ == '__main__':
         # Add batch dimension: 1 x D x D x 3
         input_img = np.expand_dims(input_img, 0)
         print('input_img is ready. Prepared to be predicted...')
-	joints, verts, cams, joints3d, theta = model.predict(input_img, get_theta=True)
+
+        joints, verts, cams, joints3d, theta = model.predict(input_img, get_theta=True)
         client.sendto(str.encode(json.dumps(theta.tolist())), ('172.27.15.141', 8888))
         t1 = time.time()
         if True:
