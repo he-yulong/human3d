@@ -14,6 +14,7 @@ from hyl_utils.network.color_client import start_color_client
 import socket
 import json
 import cv2
+import argparse
 
 sess = tf.Session()
 
@@ -52,6 +53,7 @@ def preprocess_frame(frame, json_path=None):
 
     return crop, proc_param, frame
 
+
 def visualize_joints(img, proc_param, joints, verts, cam):
     cam_for_render, vert_shifted, joints_orig = vis_util.get_original(
         proc_param, verts, cam, joints, img_size=img.shape[:2])
@@ -63,11 +65,13 @@ def visualize_joints(img, proc_param, joints, verts, cam):
 
     return rend_img_overlay
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
+    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     renderer = vis_util.SMPLRenderer(face_path=config.smpl_face_path)
 
-    @start_color_client(None, '172.27.15.189', 1024)
+
+    @start_color_client(None, '172.27.15.141', 1024)
     # @start_color_client(None, '172.27.40.106', 1024)
     def process_data(self, data):
         t0 = time.time()
@@ -75,12 +79,18 @@ if __name__ == '__main__':
         # Add batch dimension: 1 x D x D x 3
         input_img = np.expand_dims(input_img, 0)
         joints, verts, cams, joints3d, theta = model.predict(input_img, get_theta=True)
+        client.sendto(str.encode(json.dumps(theta.tolist())), ('172.27.15.141', 8888))
         t1 = time.time()
-        skel_img = visualize_joints(img, proc_param, joints[0], verts[0], cams[0])
-        t2 = time.time()
-        cv2.imshow('render_SMPL', skel_img)
+        if False:
+            skel_img = visualize_joints(img, proc_param, joints[0], verts[0], cams[0])
+            t2 = time.time()
+            cv2.imshow('render_SMPL', skel_img)
+        else:
+            t2 = time.time()
+            cv2.imshow('render_SMPL', img)
         t3 = time.time()
         if (cv2.waitKey(1) & 0xFF) == ord('q'):
+            client.sendto(str.encode(json.dumps('#STOP#')), ('172.27.15.141', 8888))
             exit(0)
 
         # client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
