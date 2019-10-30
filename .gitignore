@@ -1,5 +1,9 @@
 *.DS_Store*
 *.idea*
+logs*/
+*.DS_Store
+*.pyc
+forrelease.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
