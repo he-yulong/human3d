@@ -19,7 +19,7 @@ import json
 import numpy as np
 
 curr_path = osp.dirname(osp.abspath(__file__))
-model_dir = osp.join(curr_path, '..', 'models')
+model_dir = osp.join(curr_path, '..', '..', 'models')
 
 if not osp.exists(model_dir):
     print('Fix path to models/')

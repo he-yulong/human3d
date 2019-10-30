@@ -78,10 +78,11 @@ if __name__ == '__main__':
         input_img, proc_param, img = preprocess_frame(data, None)
         # Add batch dimension: 1 x D x D x 3
         input_img = np.expand_dims(input_img, 0)
-        joints, verts, cams, joints3d, theta = model.predict(input_img, get_theta=True)
+        print('input_img is ready. Prepared to be predicted...')
+	joints, verts, cams, joints3d, theta = model.predict(input_img, get_theta=True)
         client.sendto(str.encode(json.dumps(theta.tolist())), ('172.27.15.141', 8888))
         t1 = time.time()
-        if False:
+        if True:
             skel_img = visualize_joints(img, proc_param, joints[0], verts[0], cams[0])
             t2 = time.time()
             cv2.imshow('render_SMPL', skel_img)
