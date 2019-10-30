@@ -131,7 +131,10 @@ def main(img_path, json_path=None):
 
     # Video capture
     import cv2
+    import socket
+    import json
     cap = cv2.VideoCapture(0)
+    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     import time
     while True:
@@ -152,11 +155,14 @@ def main(img_path, json_path=None):
         joints, verts, cams, joints3d, theta = model.predict(
             input_img, get_theta=True)
         t2 = time.time()
-        print('joints:', joints, joints.shape)
-        print('joints3d:', joints3d, joints3d.shape)
-        print('theta:', theta, theta.shape)
+        # print('joints:', joints, joints.shape)
+        # print('joints3d:', joints3d, joints3d.shape)
+        # print('theta:', theta, theta.shape)
         # print('verts:', verts[0], verts[0].shape)
         # print('cams:', cams[0], cams[0].shape)
+
+        client.sendto(str.encode(json.dumps(theta.tolist())), ('127.0.0.1', 8888))
+
         skel_img = visualize_joints(img, proc_param, joints[0], verts[0], cams[0])
 
         t3 = time.time()
@@ -164,6 +170,7 @@ def main(img_path, json_path=None):
 
         t4 = time.time()
         if (cv2.waitKey(1) & 0xFF) == ord('q'):
+            client.sendto(str.encode(json.dumps('#STOP#')), ('127.0.0.1', 8888))
             break
 
         print(t1 - t0)
