@@ -70,7 +70,7 @@ if __name__ == '__main__':
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     renderer = vis_util.SMPLRenderer(face_path=config.smpl_face_path)
 
-
+    frame_id = 0
     @start_color_client(None, '172.27.15.141', 1024)
     # @start_color_client(None, '172.27.40.106', 1024)
     def process_data(self, data):
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         joints, verts, cams, joints3d, theta = model.predict(input_img, get_theta=True)
         client.sendto(str.encode(json.dumps(theta.tolist())), ('172.27.15.141', 8888))
         t1 = time.time()
-        if True:
+        if False:
             skel_img = visualize_joints(img, proc_param, joints[0], verts[0], cams[0])
             t2 = time.time()
             cv2.imshow('render_SMPL', skel_img)
@@ -109,7 +109,8 @@ if __name__ == '__main__':
         #     # 'cam': cams[0].tolist(),
         # }
         # client.sendto(str.encode(json.dumps(data)), ('172.27.15.189', 4399))
-
+        print('frame_id: ', frame_id)
+        frame_id += 1
         print('inference: ', t1 - t0)
         print('rendering: ', t2 - t1)
         print('imshow: ', t3 - t2)
