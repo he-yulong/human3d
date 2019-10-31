@@ -28,7 +28,7 @@ class CameraServer(asyncore.dispatcher):
             self.cap = cv2.VideoCapture(0)
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 224)
-            self.cap.set(cv2.CAP_PROP_FPS, 5)
+            self.cap.set(cv2.CAP_PROP_FPS, 30)
         except:
             print("Unexpected error: ", sys.exc_info()[1])
             sys.exit(1)

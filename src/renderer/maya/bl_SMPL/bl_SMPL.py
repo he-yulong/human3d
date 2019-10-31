@@ -44,7 +44,7 @@ Installation Steps:
 '''
 from os.path import expanduser
 
-SMPL_dir = expanduser('/Users/mac/github/3d-human/maya/bl_SMPL')
+SMPL_dir = expanduser('/Users/mac/github/human3d/src/renderer/maya/bl_SMPL')
 
 '''
 4)  Inside Maya, go to Window >> Settings/Preferences >> Plug-in Manager
@@ -218,6 +218,8 @@ class bl_SMPL():
 
         if mc.objExists('*Pose206'):
             self.target = self.getTargetBody()
+            print 'target:'
+            print self.target
 
             rescale = mc.checkBox(self.convertUnitsCB, query=True, value=True)
             hideRoot = mc.checkBox(self.hideRootCB, query=True, value=True)
@@ -474,6 +476,8 @@ class bl_SMPL():
         if mc.objExists('*Pose206'):
 
             self.target = self.getTargetBody()
+            print 'target:'
+            print self.target
 
             self.blendShapeNode = \
             mc.listConnections(mc.listConnections(mc.listRelatives(self.target, type='shape')[0], type='objectSet'),
@@ -532,6 +536,8 @@ class bl_SMPL():
             for shape in reversed(blendShapes):
                 if shape.startswith('my'):
                     bs = shape
+                    print 'hello!!!'
+                    print '%s_blendshapes.%s' % (self.target, bs)
                     bsVal = mc.getAttr('%s_blendshapes.%s' % (self.target, bs))
 
                     # Save this value for the reset function

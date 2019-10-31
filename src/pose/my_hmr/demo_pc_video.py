@@ -92,7 +92,7 @@ def main(img_path, json_path=None):
     # parser.add_argument('v', 'video_path', help='file path.')
     # args = parser.parse_args()
 
-    capture = cv2.VideoCapture('data/1 Mile Jog _ Walk At Home Fitness Videos.mp4')
+    capture = cv2.VideoCapture('data/demo2.mov')
     # capture.set(cv2.CAP_PROP_FRAME_WIDTH, 224)
     # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 224)
     # capture.set(cv2.CAP_PROP_FPS, 0.1)
@@ -101,6 +101,7 @@ def main(img_path, json_path=None):
         print('Error openning the video')
 
     import time
+
     while capture.isOpened():
 
         ret, frame = capture.read()
@@ -121,7 +122,7 @@ def main(img_path, json_path=None):
             joints, verts, cams, joints3d, theta = model.predict(
                 input_img, get_theta=True)
             t2 = time.time()
-            client.sendto(str.encode(json.dumps(theta.tolist())), ('127.0.0.1', 8888))
+            client.sendto(str.encode(json.dumps(theta.tolist())), ('127.0.0.1', 8889))
 
             skel_img = visualize_joints(img, proc_param, joints[0], verts[0], cams[0])
 
@@ -133,7 +134,7 @@ def main(img_path, json_path=None):
             # gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             # cv2.imshow('Grayscale frame', gray_frame)
             if (cv2.waitKey(10) & 0xFF) == ord('q'):
-                client.sendto(str.encode(json.dumps('#STOP#')), ('127.0.0.1', 8888))
+                client.sendto(str.encode(json.dumps('#STOP#')), ('127.0.0.1', 8889))
                 break
 
             print(t1 - t0)
@@ -142,6 +143,7 @@ def main(img_path, json_path=None):
             print(t4 - t3)
             print('-' * 20)
         else:
+            client.sendto(str.encode(json.dumps('#STOP#')), ('127.0.0.1', 8889))
             break
 
     capture.release()
