@@ -66,14 +66,16 @@ def visualize_joints(img, proc_param, joints, verts, cam):
     return rend_img_overlay
 
 
+frame_id = 0
 if __name__ == '__main__':
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     renderer = vis_util.SMPLRenderer(face_path=config.smpl_face_path)
 
-    frame_id = 0
+
     @start_color_client(None, '172.27.15.141', 1024)
     # @start_color_client(None, '172.27.40.106', 1024)
     def process_data(self, data):
+        global frame_id
         t0 = time.time()
         input_img, proc_param, img = preprocess_frame(data, None)
         # Add batch dimension: 1 x D x D x 3
