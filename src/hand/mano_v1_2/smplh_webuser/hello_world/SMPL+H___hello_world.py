@@ -38,13 +38,13 @@ the SMPL+H model. The code shows how to:
 
 Running the Hello World code:
 =============================
-Inside Terminal, navigate to the mano/webuser/hello_world directory. You can run 
+Inside Terminal, navigate to the mano/smplh_webuser/hello_world directory. You can run
 the hello world script now by typing the following:
 >	python SMPL+H___hello_world.py
 
 '''
 
-from webuser.smpl_handpca_wrapper import load_model
+from smplh_webuser.smpl_handpca_wrapper import load_model
 import numpy as np
 
 # Load SMPL+H model (here we load the female model)

@@ -44,7 +44,7 @@ This code shows how to:
 
 Running the Hello World code:
 =============================
-Inside Terminal, navigate to the mano/webuser/hello_world directory. You can run 
+Inside Terminal, navigate to the mano/smplh_webuser/hello_world directory. You can run
 the hello world script now by typing the following:
 >	python MANO___render.py
 
@@ -55,7 +55,7 @@ import numpy as np
 from opendr.renderer import ColoredRenderer
 from opendr.lighting import LambertianPointLight
 from opendr.camera import ProjectPoints
-from webuser.smpl_handpca_wrapper_HAND_only import load_model
+from smplh_webuser.smpl_handpca_wrapper_HAND_only import load_model
 
 # Load MANO model (here we load the right hand model)
 m = load_model('../../models/MANO_RIGHT.pkl', ncomps=6, flat_hand_mean=False)

@@ -9,11 +9,11 @@ For comments or questions, please email us at: mano@tue.mpg.de
 
 About this file:
 ================
-This file defines a wrapper for the loading functions of the SMPL+H model. 
+This file defines a wrapper for the loading functions of the MANO model. 
 
 Modules included:
 - load_model:
-  loads the SMPL+H model from a given file location (i.e. a .pkl file location), 
+  loads the MANO model from a given file location (i.e. a .pkl file location), 
   or a dictionary object.
 
 '''
@@ -23,7 +23,7 @@ def ready_arguments(fname_or_dict, posekey4vposed='pose'):
     import cPickle as pickle
     import chumpy as ch
     from chumpy.ch import MatVecMult
-    from posemapper import posemap
+    from smplh_webuser.posemapper import posemap
 
     if not isinstance(fname_or_dict, dict):
         dd = pickle.load(open(fname_or_dict))
@@ -59,11 +59,11 @@ def ready_arguments(fname_or_dict, posekey4vposed='pose'):
     return dd
 
 
-def load_model(fname_or_dict='./models/SMPLH_female.pkl', ncomps=12, flat_hand_mean=False, v_template=None):
-    ''' This model loads the fully articulable SMPL model,
-    and replaces the 156-prefix last DOFS by ncomps from PCA'''
+def load_model(fname_or_dict='./models/MANO_RIGHT.pkl', ncomps=6, flat_hand_mean=False, v_template=None):
+    ''' This model loads the fully articulable HAND SMPL model,
+    and replaces the pose DOFS by ncomps from PCA'''
 
-    from verts import verts_core
+    from smplh_webuser.verts import verts_core
     import numpy as np
     import chumpy as ch
     import pickle
@@ -75,34 +75,27 @@ def load_model(fname_or_dict='./models/SMPLH_female.pkl', ncomps=12, flat_hand_m
     else:
         smpl_data = fname_or_dict
 
-    body_pose_dofs = 66
+    rot = 3  # for global orientation!!!
 
-    from pickle import load
-    with open('/is/ps2/dtzionas/mano/models/MANO_LEFT.pkl', 'rb') as f:
-        hand_l = load(f)
-    with open('/is/ps2/dtzionas/mano/models/MANO_RIGHT.pkl', 'rb') as f:
-        hand_r = load(f)
-    hands_componentsl = hand_l['hands_components']
-    hands_meanl       = np.zeros(hands_componentsl.shape[1]) if flat_hand_mean else hand_l['hands_mean']
-    hands_coeffsl     = hand_l['hands_coeffs'][:, :ncomps//2]
-    hands_componentsr = hand_r['hands_components']
-    hands_meanr       = np.zeros(hands_componentsr.shape[1]) if flat_hand_mean else hand_r['hands_mean']
-    hands_coeffsr     = hand_r['hands_coeffs'][:, :ncomps//2]
+    hands_components = smpl_data['hands_components']
+    hands_mean       = np.zeros(hands_components.shape[1]) if flat_hand_mean else smpl_data['hands_mean']
+    hands_coeffs     = smpl_data['hands_coeffs'][:, :ncomps]
 
-    selected_components = np.vstack((np.hstack((hands_componentsl[:ncomps//2], np.zeros_like(hands_componentsl[:ncomps//2]))),
-                                     np.hstack((np.zeros_like(hands_componentsr[:ncomps//2]), hands_componentsr[:ncomps//2]))))
-    hands_mean = np.concatenate((hands_meanl, hands_meanr))
+    selected_components = np.vstack((hands_components[:ncomps]))
+    hands_mean = hands_mean.copy()
 
-    pose_coeffs = ch.zeros(body_pose_dofs + selected_components.shape[0])
-    full_hand_pose = pose_coeffs[body_pose_dofs:(body_pose_dofs+ncomps)].dot(selected_components)
+    pose_coeffs = ch.zeros(rot + selected_components.shape[0])
+    full_hand_pose = pose_coeffs[rot:(rot+ncomps)].dot(selected_components)
 
-    smpl_data['fullpose'] = ch.concatenate((pose_coeffs[:body_pose_dofs], hands_mean + full_hand_pose))
+    smpl_data['fullpose'] = ch.concatenate((pose_coeffs[:rot], hands_mean + full_hand_pose))
     smpl_data['pose'] = pose_coeffs
 
     Jreg = smpl_data['J_regressor']
     if not sp.issparse(Jreg):
         smpl_data['J_regressor'] = (sp.csc_matrix((Jreg.data, (Jreg.row, Jreg.col)), shape=Jreg.shape))
-    # very slightly modify ready_arguments to make sure that it uses the fullpose (which will NOT be pose) for the computation of posedirs
+
+    # slightly modify ready_arguments to make sure that it uses the fullpose 
+    # (which will NOT be pose) for the computation of posedirs
     dd = ready_arguments(smpl_data, posekey4vposed='fullpose')
 
     # create the smpl formula with the fullpose,

@@ -38,13 +38,13 @@ the MANO model. The code shows how to:
 
 Running the Hello World code:
 =============================
-Inside Terminal, navigate to the mano/webuser/hello_world directory. You can run 
+Inside Terminal, navigate to the mano/smplh_webuser/hello_world directory. You can run
 the hello world script now by typing the following:
 >	python MANO___hello_world.py
 
 '''
 
-from webuser.smpl_handpca_wrapper_HAND_only import load_model
+from smplh_webuser.smpl_handpca_wrapper_HAND_only import load_model
 import numpy as np
 
 ## Load MANO/SMPL+H model (here we load the righ hand model)
