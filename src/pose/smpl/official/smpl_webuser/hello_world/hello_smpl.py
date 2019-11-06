@@ -34,7 +34,7 @@ the SMPL model. The code shows how to:
 
 Running the Hello World code:
 =============================
-Inside Terminal, navigate to the smpl/webuser/hello_world directory. You can run 
+Inside Terminal, navigate to the smpl/smplh_webuser/hello_world directory. You can run 
 the hello world script now by typing the following:
 >	python hello_smpl.py
 
