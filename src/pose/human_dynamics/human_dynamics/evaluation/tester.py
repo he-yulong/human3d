@@ -10,15 +10,15 @@ import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
 
-from src.evaluation.eval_util import update_dict_entries
-from src.models import (
+from human_dynamics.evaluation.eval_util import update_dict_entries
+from human_dynamics.models import (
     batch_pred_omega,
     get_hallucinator_model,
     get_image_encoder,
     get_temporal_encoder,
 )
-from src.omega import OmegasPred
-from src.tf_smpl.batch_smpl import SMPL
+from human_dynamics.omega import OmegasPred
+from human_dynamics.tf_smpl.batch_smpl import SMPL
 
 
 class Tester(object):

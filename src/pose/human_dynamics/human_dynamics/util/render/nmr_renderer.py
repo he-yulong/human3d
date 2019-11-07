@@ -14,9 +14,9 @@ from torch.autograd import Variable
 
 from skimage.io import imread
 
-from src.util.common import resize_img
-from src.util.render.torch_utils import orthographic_proj_withz_idrot
-from src.util.render.render_utils import (
+from human_dynamics.util.common import resize_img
+from human_dynamics.util.render.torch_utils import orthographic_proj_withz_idrot
+from human_dynamics.util.render.render_utils import (
     draw_skeleton,
     draw_text,
 )
@@ -51,7 +51,7 @@ class VisRenderer(object):
 
     def __init__(self,
                  img_size=256,
-                 face_path='src/tf_smpl/smpl_faces.npy',
+                 face_path='human_dynamics/tf_smpl/smpl_faces.npy',
                  t_size=1):
 
         self.renderer = nr.Renderer(

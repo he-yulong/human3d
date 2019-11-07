@@ -12,13 +12,13 @@ import numpy as np
 from skimage.io import imread
 from tqdm import tqdm
 
-from src.util.render.nmr_renderer import (
+from human_dynamics.util.render.nmr_renderer import (
     VisRenderer,
     visualize_img,
     visualize_img_orig,
 )
-from src.util.common import resize_img
-from src.util.smooth_bbox import get_smooth_bbox_params
+from human_dynamics.util.common import resize_img
+from human_dynamics.util.smooth_bbox import get_smooth_bbox_params
 
 
 IMG_SIZE = 224
