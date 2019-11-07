@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="hyl_human_dynamics",
-    version="0.0.1",
+    version="0.0.2",
     author="Yulong He",
     author_email="1183851628@qq.com",
     description="A small example package",

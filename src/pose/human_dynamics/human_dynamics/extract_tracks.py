@@ -137,7 +137,9 @@ def compute_tracks(vid_path, out_dir):
     mkdir(res_dir)
 
     dump_frames(vid_path, img_dir)
+    # alphapose-results.json
     run_alphapose(img_dir, res_dir)
+    # alphapose-results-forvis.json, alphapose-results-forvis-tracked.json
     track_json = run_poseflow(img_dir, res_dir)
 
     return track_json, img_dir

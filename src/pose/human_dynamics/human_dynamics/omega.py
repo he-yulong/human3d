@@ -8,9 +8,9 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from src.util.tf_ops import compute_deltas_batched
-from src.tf_smpl.batch_lbs import batch_rodrigues
-from src.tf_smpl.projection import batch_orth_proj_idrot
+from human_dynamics.util.tf_ops import compute_deltas_batched
+from human_dynamics.tf_smpl.batch_lbs import batch_rodrigues
+from human_dynamics.tf_smpl.projection import batch_orth_proj_idrot
 
 
 class Omegas(object):
