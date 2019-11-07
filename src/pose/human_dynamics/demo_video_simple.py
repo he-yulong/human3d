@@ -12,23 +12,19 @@ from __future__ import print_function
 
 from glob import glob
 import json
-import os.path as osp
+import os.path
 import pickle
 import re
 
-from absl import flags
-import ipdb
+import time
 import numpy as np
 
 from extract_tracks import compute_tracks
-from src.config import get_config
-from src.evaluation.run_video import (
-    process_image,
-    render_preds,
-)
-from src.evaluation.tester import Tester
-from src.util.common import mkdir
-from src.util.smooth_bbox import get_smooth_bbox_params
+from human_dynamics.config import get_config
+from human_dynamics.evaluation.run_video import process_image, render_preds
+from human_dynamics.evaluation.tester import Tester
+from human_dynamics.util.common import mkdir
+from human_dynamics.util.smooth_bbox import get_smooth_bbox_params
 
 
 def get_labels_poseflow(json_path, num_frames, min_kp_count=20):
@@ -56,7 +52,6 @@ def get_labels_poseflow(json_path, num_frames, min_kp_count=20):
         if frame_ids[0] != 0:
             print('PoseFlow did not find people in the first frame. '
                   'Needs testing.')
-            ipdb.set_trace()
 
     all_kps_dict = {}
     all_kps_count = {}
@@ -97,7 +92,7 @@ def get_labels_poseflow(json_path, num_frames, min_kp_count=20):
 def predict_on_tracks(model, img_dir, poseflow_path, output_path, track_id,
                       trim_length):
     # Get all the images
-    im_paths = sorted(glob(osp.join(img_dir, '*.png')))
+    im_paths = sorted(glob(os.path.join(img_dir, '*.png')))
     all_kps = get_labels_poseflow(poseflow_path, len(im_paths))
 
     # Here we set which track to use.
@@ -129,8 +124,8 @@ def predict_on_tracks(model, img_dir, poseflow_path, output_path, track_id,
         output_path += '_{}'.format(track_id)
 
     mkdir(output_path)
-    pred_path = osp.join(output_path, 'hmmr_output.pkl')
-    if osp.exists(pred_path):
+    pred_path = os.path.join(output_path, 'hmmr_output.pkl')
+    if os.path.exists(pred_path):
         print('----------')
         print('Loading pre-computed prediction.')
         print('----------')
@@ -163,7 +158,7 @@ def predict_on_tracks(model, img_dir, poseflow_path, output_path, track_id,
         trim_length=trim_length,
     )
 
-import time
+
 def run_on_video(model, vid_path, trim_length):
     """
     Main driver.
@@ -178,8 +173,8 @@ def run_on_video(model, vid_path, trim_length):
     # See extract_tracks.py
     poseflow_path, img_dir = compute_tracks(vid_path, config.track_dir)
 
-    vid_name = osp.basename(vid_path).split('.')[0]
-    out_dir = osp.join(config.out_dir, vid_name, 'hmmr_output')
+    vid_name = os.path.basename(vid_path).split('.')[0]
+    out_dir = os.path.join(config.out_dir, vid_name, 'hmmr_output')
 
     print(poseflow_path, img_dir, out_dir)
     print(time.time() - t0)
@@ -196,48 +191,41 @@ def run_on_video(model, vid_path, trim_length):
 
 
 if __name__ == '__main__':
-    flags.DEFINE_string(
-        'vid_path', 'penn_action-2278.mp4',
-        'video to run on')
-    flags.DEFINE_integer(
-        'track_id', 0,
-        'PoseFlow generates a track for each detected person. This determines which'
-        ' track index to use if using vid_path.'
-    )
-    flags.DEFINE_string('vid_dir', None, 'If set, runs on all video in directory.')
-    flags.DEFINE_string('out_dir', 'demo_output/',
-                        'Where to save final HMMR results.')
-    flags.DEFINE_string('track_dir', 'demo_output/',
-                        'Where to save intermediate tracking results.')
-    flags.DEFINE_string('pred_mode', 'pred',
-                        'Which prediction track to use (Only pred supported now).')
-    flags.DEFINE_string('mesh_color', 'blue', 'Color of mesh.')
-    flags.DEFINE_integer(
-        'sequence_length', 20,
-        'Length of sequence during prediction. Larger will be faster for longer '
-        'videos but use more memory.'
-    )
-    flags.DEFINE_boolean(
-        'trim', False,
-        'If True, trims the first and last couple of frames for which the temporal'
-        'encoder doesn\'t see full fov.'
-    )
+    import argparse
 
-    config = get_config()
+    # Demo basic argument
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--vid_path', default='penn_action-2278.mp4', help='video to run on.')
+    parser.add_argument('--track_id',
+                        type=int,
+                        default=0,
+                        help='PoseFlow generates a track for each detected person. This determines which '
+                             'track index to use if using vid_path.'
+                        )
+    parser.add_argument('--vid_dir', default=None, help='If set, runs on all video in directory.')
+    parser.add_argument('--out_dir', default='demo_output/', help='Where to save final HMMR results.')
+
+    parser.add_argument('--track_dir', default='demo_output/', help='Where to save intermediate tracking results.')
+    parser.add_argument('--pred_mode', default='pred', help='Which prediction track to use (Only pred supported now).')
+    parser.add_argument('--mesh_color', default='blue', help='Color of mesh.')
+    parser.add_argument('--sequence_length', type=int, default=20,
+                        help='Length of sequence during prediction. Larger will be faster for longer '
+                             'videos but use more memory.'
+                        )
+    parser.add_argument('--trim', type=bool, default=False,
+                        help='If True, trims the first and last couple of frames for which the temporal'
+                             'encoder doesn\'t see full fov.'
+                        )
+
+    config = get_config(parser)
 
     # Set up model:
-    model_hmmr = Tester(
-        config,
-        pretrained_resnet_path='models/hmr_noS5.ckpt-642561'
-    )
+    model_hmmr = Tester(config, pretrained_resnet_path='models/hmr_noS5.ckpt-642561')
 
     # Make output directory.
     mkdir(config.out_dir)
 
-    if config.trim:
-        trim_length = model_hmmr.fov // 2
-    else:
-        trim_length = 0
+    trim_length = model_hmmr.fov // 2 if config.trim else 0
 
     if config.vid_dir:
         vid_paths = sorted(glob(config.vid_dir + '/*.mp4'))
