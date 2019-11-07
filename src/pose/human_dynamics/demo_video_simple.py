@@ -168,7 +168,6 @@ def run_on_video(model, vid_path, trim_length):
     print('----------')
     print('Computing tracks on {}.'.format(vid_path))
     print('----------')
-    t0 = time.time()
 
     # See extract_tracks.py
     # poseflow_path, img_dir = compute_tracks(vid_path, config.track_dir)
@@ -177,10 +176,6 @@ def run_on_video(model, vid_path, trim_length):
 
     vid_name = os.path.basename(vid_path).split('.')[0]
     out_dir = os.path.join(config.out_dir, vid_name, 'hmmr_output')
-
-    print(poseflow_path, img_dir, out_dir)
-    print(time.time() - t0)
-    exit(0)
 
     predict_on_tracks(
         model=model,
