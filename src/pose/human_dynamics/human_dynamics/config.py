@@ -96,7 +96,6 @@ def get_config(parser):
     parser.add_argument('--predict_delta', type=bool, default=True, help='If True, predicts future and past as well.')
     parser.add_argument('--precomputed_phi', type=bool, default=True,
                         help='If True, uses tfrecord with precomputed phi.')
-    parser.add_argument('--use_3d_label', type=bool, default=True, help='Uses 3D labels if on.')
     parser.add_argument('--use_delta_from_pred', type=bool, default=True,
                         help='If True, initializes delta regressor from current prediction.')
     parser.add_argument('--use_hmr_only', type=bool, default=False, help='If true, uses HMR model.')
