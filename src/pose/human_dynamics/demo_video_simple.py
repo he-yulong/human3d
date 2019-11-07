@@ -19,7 +19,7 @@ import re
 import time
 import numpy as np
 
-from extract_tracks import compute_tracks
+from human_dynamics.extract_tracks import compute_tracks
 from human_dynamics.config import get_config
 from human_dynamics.evaluation.run_video import process_image, render_preds
 from human_dynamics.evaluation.tester import Tester
@@ -171,7 +171,9 @@ def run_on_video(model, vid_path, trim_length):
     t0 = time.time()
 
     # See extract_tracks.py
-    poseflow_path, img_dir = compute_tracks(vid_path, config.track_dir)
+    # poseflow_path, img_dir = compute_tracks(vid_path, config.track_dir)
+    poseflow_path = '/work/gitlab/human3d/src/pose/human_dynamics/demo_output/youtube_video/AlphaPose_output/alphapose-results-forvis-tracked.json'
+    img_dir = '/work/gitlab/human3d/src/pose/human_dynamics/demo_output/youtube_video/video_frames'
 
     vid_name = os.path.basename(vid_path).split('.')[0]
     out_dir = os.path.join(config.out_dir, vid_name, 'hmmr_output')
