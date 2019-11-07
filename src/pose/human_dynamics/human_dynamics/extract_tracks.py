@@ -67,7 +67,7 @@ def run_alphapose(img_dir, out_dir):
 
     print('Running: {}'.format(' '.join(cmd)))
     curr_dir = os.getcwd()
-    os.chdir('src/external/AlphaPose')
+    os.chdir('human_dynamics/external/AlphaPose')
     ret = subprocess.call(cmd)
     if ret != 0:
         print('Issue running alphapose. Please make sure you can run the above '
@@ -99,7 +99,7 @@ def run_poseflow(img_dir, out_dir):
 
     print('Running: {}'.format(' '.join(cmd)))
     curr_dir = os.getcwd()
-    os.chdir('src/external/AlphaPose')
+    os.chdir('human_dynamics/external/AlphaPose')
     ret = subprocess.call(cmd)
     if ret != 0:
         print('Issue running PoseFlow. Please make sure you can run the above '
