@@ -82,7 +82,7 @@ def run_poseflow(img_dir, out_dir):
     alphapose_json = os.path.join(out_dir, 'alphapose-results.json')
     out_json = os.path.join(out_dir, 'alphapose-results-forvis-tracked.json')
     if os.path.exists(out_json):
-        print('Tracking: done!')
+        print('Tracking: done. Alphapose-results-forvis-tracked.json already exist.')
         return out_json
 
     print('Computing tracking with PoseFlow')
@@ -137,11 +137,9 @@ def compute_tracks(vid_path, out_dir):
     mkdir(res_dir)
 
     dump_frames(vid_path, img_dir)
-
     run_alphapose(img_dir, res_dir)
-
-    exit(0)
     track_json = run_poseflow(img_dir, res_dir)
+
     return track_json, img_dir
 
 
