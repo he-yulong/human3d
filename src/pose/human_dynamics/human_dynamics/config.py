@@ -8,29 +8,29 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os.path as osp
-from os import makedirs
-from glob import glob
-from datetime import datetime
 import json
+import os
+from datetime import datetime
+from glob import glob
+from os import makedirs
+
 import ipdb
 import numpy as np
 
-curr_path = osp.dirname(osp.abspath(__file__))
-model_dir = osp.join(curr_path, '..', 'models')
-if not osp.exists(model_dir):
+curr_path = os.path.dirname(os.path.abspath(__file__))
+model_dir = os.path.join('../', 'models')
+if not os.path.exists(model_dir):
     print('Fix path to models/')
     ipdb.set_trace()
 
-SMPL_MODEL_PATH = osp.join(model_dir,
-                           'neutral_smpl_with_cocoplustoesankles_reg.pkl')
-SMPL_FACE_PATH = osp.join(curr_path, '../src/tf_smpl', 'smpl_faces.npy')
+SMPL_MODEL_PATH = os.path.join(model_dir, 'neutral_smpl_with_cocoplustoesankles_reg.pkl')
+SMPL_FACE_PATH = os.path.join(curr_path, '../src/tf_smpl', 'smpl_faces.npy')
 
 # Default pred-trained model path for the demo.
-PRETRAINED_MODEL = osp.join(model_dir, 'hmr_noS5.ckpt-642561')
+PRETRAINED_MODEL = os.path.join(model_dir, 'hmr_noS5.ckpt-642561')
 
 # Pre-trained HMMR model:
-HMMR_MODEL = osp.join(model_dir, 'hmmr_model.ckpt-1119816')
+HMMR_MODEL = os.path.join(model_dir, 'hmmr_model.ckpt-1119816')
 
 
 def get_config(parser):
@@ -134,12 +134,10 @@ def get_config(parser):
 
 
 # ----- For training ----- #
-
-
 def prepare_dirs(config, prefix=[]):
     # Continue training from a load_path
     if config.load_path:
-        if not osp.exists(config.load_path):
+        if not os.path.exists(config.load_path):
             print("load_path: %s doesnt exist..!!!" % config.load_path)
             import ipdb
             ipdb.set_trace()
@@ -147,7 +145,7 @@ def prepare_dirs(config, prefix=[]):
 
         # Check for changed training parameter:
         # Load prev config param path
-        param_path = glob(osp.join(config.load_path, '*.json'))[0]
+        param_path = glob(os.path.join(config.load_path, '*.json'))[0]
 
         with open(param_path, 'r') as fp:
             prev_config = json.load(fp)
@@ -277,15 +275,15 @@ def prepare_dirs(config, prefix=[]):
         if config.pretrained_model_path is not None:
             if 'resnet_v2_50' in config.pretrained_model_path:
                 postfix.append('from_resnet')
-            elif 'hmr_noS5.ckpt-642561' == osp.basename(
+            elif 'hmr_noS5.ckpt-642561' == os.path.basename(
                     config.pretrained_model_path[0]):
                 postfix.append('from_{}'.format(
-                    osp.basename(config.pretrained_model_path[0])))
+                    os.path.basename(config.pretrained_model_path[0])))
             else:
                 # We are finetuning from HMR/HMMR! include date.
-                date = osp.basename(
-                    osp.dirname(config.pretrained_model_path[0]))[-10:]
-                model_ckpt = osp.basename(config.pretrained_model_path[0])
+                date = os.path.basename(
+                    os.path.dirname(config.pretrained_model_path[0]))[-10:]
+                model_ckpt = os.path.basename(config.pretrained_model_path[0])
                 postfix.append('from_{}_{}'.format(date, model_ckpt))
 
         # Data:
@@ -312,16 +310,16 @@ def prepare_dirs(config, prefix=[]):
         time_str = datetime.now().strftime("%b%d_%H%M")
 
         save_name = "%s_%s_%s" % (prefix, postfix, time_str)
-        config.model_dir = osp.join(config.log_dir, save_name)
+        config.model_dir = os.path.join(config.log_dir, save_name)
 
     for path in [config.log_dir, config.model_dir]:
-        if not osp.exists(path):
+        if not os.path.exists(path):
             print('making %s' % path)
             makedirs(path)
 
 
 def save_config(config):
-    param_path = osp.join(config.model_dir, "params.json")
+    param_path = os.path.join(config.model_dir, "params.json")
 
     print("[*] MODEL dir: %s" % config.model_dir)
     print("[*] PARAM path: %s" % param_path)
